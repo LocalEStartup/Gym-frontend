@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
+
+.app-bg {
+  background: linear-gradient(140deg, #0d1b3e 80%, #fed600 100%);
+  min-height: 100vh;
+  font-family: "Montserrat", sans-serif;
+  color: #fff;
+}
+::-webkit-scrollbar {
+  background: #0d1b3e;
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #fed600;
+  border-radius: 5px;
+}
