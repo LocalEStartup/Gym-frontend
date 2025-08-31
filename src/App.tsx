@@ -10,11 +10,12 @@ import GalleryPage from "./pages/GalleryPage";
 import NavBar from "./components/NavBar";
 import ChatBot from "./components/ChatBot";
 import "./App.css";
+import Dashboard from "./pages/Admin/Dashboard";
 
 const App: React.FC = () => (
   <Router>
     <div className="app-bg">
-      <NavBar />
+      {/* <NavBar /> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductPage />} />
@@ -22,6 +23,7 @@ const App: React.FC = () => (
         <Route path="/about" element={<AboutPage />} />
         <Route path="/trainers" element={<TrainerPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/dashboard/*" element={<Dashboard />}/>
       </Routes>
       <ChatBot /> {/* ChatBot appears on all pages */}
     </div>
