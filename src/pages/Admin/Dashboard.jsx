@@ -8,7 +8,8 @@ import {
   Truck,
   PackagePlus,
 } from "lucide-react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import axios from "axios";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import UsersComponent from "./Users";
@@ -16,7 +17,6 @@ import AddUsers from "./AddUsers";
 import Orders from "./Orders";
 import AddProducts from "./AddProducts";
 
-//  Dashboard Content (cards)
 function DashboardContent({ counts }) {
   const cards = [
     { title: "Users", icon: <Users size={30} />, value: counts.user },
@@ -47,13 +47,34 @@ function DashboardContent({ counts }) {
 }
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [headerTitle, setHeaderTitle] = useState("Dashboard");
   const [counts, setCounts] = useState({ user: 0, order: 0, chef: 0, supplier: 0 });
-  
-  useEffect(()=>setIsSidebarOpen(false),[headerTitle]);
+  const [loading, setLoading] = useState(true);
 
-  //  Single source of truth for sidebar items
+  // ✅ Check cookie auth from backend
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await axios.get(import.meta.env.VITE_API_URL+"/auth/admin-dashboard", {
+          withCredentials: true,
+        });
+
+        if (!res.data.user || res.data.user.role !== "admin") {
+          navigate("/login");
+        } else {
+          setLoading(false);
+        }
+      } catch (err) {
+        navigate("/login");
+      }
+    }
+    checkAuth();
+  }, [navigate]);
+
+  useEffect(() => setIsSidebarOpen(false), [headerTitle]);
+
   const menuItems = [
     { name: "Home", icon: <Home size={20} />, path: "home", component: <DashboardContent counts={counts} /> },
     { name: "Add Products", icon: <PackagePlus size={20} />, path: "add-products", component: <AddProducts /> },
@@ -62,20 +83,17 @@ function Dashboard() {
     { name: "Add Supplier/Chef", icon: <UserPlus size={20} />, path: "add-users", component: <AddUsers /> },
   ];
 
-
   useEffect(() => {
     async function fetchCounts() {
-      // Replace with your API call
-      // const res = await axios.get("/api/dashboard-counts");
-      // setCounts(res.data);
-      setCounts({ user: 10, order: 5, chef: 3, supplier: 2 }); // mock
+      setCounts({ user: 10, order: 5, chef: 3, supplier: 2 }); // mock data
     }
     fetchCounts();
   }, []);
 
+  if (loading) return <div className="p-10 text-center">Checking authentication...</div>;
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <Sidebar
         isOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -83,7 +101,6 @@ function Dashboard() {
         setHeaderTitle={setHeaderTitle}
       />
 
-      {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         <Header
           toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -91,9 +108,7 @@ function Dashboard() {
         />
         <main className="flex-1 overflow-y-auto p-6">
           <Routes>
-            {/*  Redirect /dashboard → /dashboard/home */}
             <Route index element={<Navigate to="home" replace />} />
-
             {menuItems.map((item, i) => (
               <Route key={i} path={item.path} element={item.component} />
             ))}

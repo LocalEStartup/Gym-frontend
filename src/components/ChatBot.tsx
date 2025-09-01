@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./ChatBot.css";
-
+import { MessageCircle } from "lucide-react"; // chat icon
 type Message = {
   sender: "user" | "bot";
   text: string;
@@ -78,7 +77,6 @@ const famousBodybuilderWorkouts: Record<string, Record<string, string>> = {
 - Seated Cable Row: 2 sets x 8-10 reps
 - Deadlift: 1 set x 8-10 reps`,
   },
-  // Add more as needed
   raul: {
     arms: `Raul Arm Workout:
 - Barbell Curl: 4 sets x 12 reps
@@ -88,13 +86,9 @@ const famousBodybuilderWorkouts: Record<string, Record<string, string>> = {
   },
 };
 
-function getBodybuilderWorkout(
-  name: string,
-  muscle: string
-): string | undefined {
+function getBodybuilderWorkout(name: string, muscle: string): string | undefined {
   const key = name.toLowerCase();
   if (famousBodybuilderWorkouts[key]) {
-    // Try to match the muscle, fallback to first available
     const muscles = Object.keys(famousBodybuilderWorkouts[key]);
     const found = muscles.find((m) => muscle.includes(m));
     return famousBodybuilderWorkouts[key][found || muscles[0]];
@@ -102,15 +96,7 @@ function getBodybuilderWorkout(
   return undefined;
 }
 
-const greetings = [
-  "hi",
-  "hello",
-  "hey",
-  "good morning",
-  "good afternoon",
-  "good evening",
-  "greetings",
-];
+const greetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "greetings"];
 
 const invalidReplies = [
   "Sorry, I didn't understand that. Could you please rephrase? 🤔",
@@ -120,62 +106,30 @@ const invalidReplies = [
   "I'm a fitness coach bot, please ask about workouts, diet, or fitness topics! 💪",
 ];
 
-const MUSCLE_GROUPS = [
-  "chest",
-  "back",
-  "legs",
-  "shoulders",
-  "biceps",
-  "triceps",
-  "abs",
-  "full body",
-  "arms",
-];
+const MUSCLE_GROUPS = ["chest", "back", "legs", "shoulders", "biceps", "triceps", "abs", "full body", "arms"];
 
 function parseMuscleGroup(input: string): string | undefined {
   return MUSCLE_GROUPS.find((mg) => input.toLowerCase().includes(mg));
 }
-
-function checkGreeting(input: string) {
-  return greetings.some((greet) => input.toLowerCase().includes(greet));
-}
-
-function checkGymAddress(input: string) {
-  return /address|where.*gym|location|how to reach|find.*gym/i.test(input);
-}
-
-function checkMaster(input: string) {
-  return /master|trainer|coach|bharani/i.test(input);
-}
-
-function checkGymTimings(input: string) {
-  return /timing|hours|open|close|time|when.*open|when.*close/i.test(input);
-}
-
-function checkSuperset(input: string) {
-  return /superset/i.test(input);
-}
-
-function checkDropset(input: string) {
-  return /dropset|drop set/i.test(input);
-}
-
-function checkBodybuilder(input: string) {
-  const names = Object.keys(famousBodybuilderWorkouts);
-  return names.find((name) => input.toLowerCase().includes(name));
-}
+function checkGreeting(input: string) { return greetings.some((greet) => input.toLowerCase().includes(greet)); }
+function checkGymAddress(input: string) { return /address|where.*gym|location|how to reach|find.*gym/i.test(input); }
+function checkMaster(input: string) { return /master|trainer|coach|bharani/i.test(input); }
+function checkGymTimings(input: string) { return /timing|hours|open|close|time|when.*open|when.*close/i.test(input); }
+function checkSuperset(input: string) { return /superset/i.test(input); }
+function checkDropset(input: string) { return /dropset|drop set/i.test(input); }
+function checkBodybuilder(input: string) { return Object.keys(famousBodybuilderWorkouts).find((name) => input.toLowerCase().includes(name)); }
 
 const ChatBot: React.FC = () => {
   const [chat, setChat] = useState<Message[]>([
-    {
-      sender: "bot",
-      text: "Hi! 😊 Ask me about workouts, diet, gym details, or famous bodybuilder routines!",
-    },
+    { sender: "bot", text: "Hi! 😊 Ask me about workouts, diet, gym details, or famous bodybuilder routines!" },
   ]);
   const [input, setInput] = useState("");
   const [state, setState] = useState<{ lastInvalidReply?: string }>({});
   const [isBotTyping, setIsBotTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -190,67 +144,35 @@ const ChatBot: React.FC = () => {
     setTimeout(() => {
       let reply = "";
 
-      // 1. Gym Address
-      if (checkGymAddress(input)) {
-        reply = `🏋️‍♂️ Gym Address:\n${gymDetails.address}`;
-      }
-      // 2. Master name
-      else if (checkMaster(input)) {
-        reply = `Our master/trainer is ${gymDetails.master}.`;
-      }
-      // 3. Gym timings
-      else if (checkGymTimings(input)) {
-        reply = `Our gym timings are:\n${gymDetails.timings}`;
-      }
-      // 4. Superset suggestion
+      if (checkGymAddress(input)) reply = `🏋️‍♂️ Gym Address:\n${gymDetails.address}`;
+      else if (checkMaster(input)) reply = `Our master/trainer is ${gymDetails.master}.`;
+      else if (checkGymTimings(input)) reply = `Our gym timings are:\n${gymDetails.timings}`;
       else if (checkSuperset(input)) {
         const muscle = parseMuscleGroup(input) || "chest";
-        reply = supersetWorkouts[muscle]
-          ? `Here's a ${muscle} superset workout:\n${supersetWorkouts[muscle]}`
-          : "Please specify a muscle group for your superset workout!";
+        reply = supersetWorkouts[muscle] ? `Here's a ${muscle} superset workout:\n${supersetWorkouts[muscle]}` : "Please specify a muscle group for your superset workout!";
       }
-      // 5. Dropset suggestion
       else if (checkDropset(input)) {
         const muscle = parseMuscleGroup(input) || "chest";
-        reply = dropsetWorkouts[muscle]
-          ? `Here's a ${muscle} dropset workout:\n${dropsetWorkouts[muscle]}`
-          : "Please specify a muscle group for your dropset workout!";
+        reply = dropsetWorkouts[muscle] ? `Here's a ${muscle} dropset workout:\n${dropsetWorkouts[muscle]}` : "Please specify a muscle group for your dropset workout!";
       }
-      // 6. Famous bodybuilder workouts
       else {
         const builder = checkBodybuilder(input);
         if (builder) {
           const muscle = parseMuscleGroup(input) || "";
           const workout = getBodybuilderWorkout(builder, muscle);
-          if (workout) {
-            reply = `Here's the workout for ${
-              builder.charAt(0).toUpperCase() + builder.slice(1)
-            }:\n${workout}`;
-          } else {
-            reply = `I found workouts for ${builder}, but not for the specific muscle group. Try asking for a different muscle or just their routine.`;
-          }
+          reply = workout ? `Here's the workout for ${builder.charAt(0).toUpperCase() + builder.slice(1)}:\n${workout}` : `I found workouts for ${builder}, but not for that muscle group.`;
         }
       }
 
-      // 7. Greetings
-      if (!reply && checkGreeting(input)) {
-        reply =
-          "Hello! 👋 How can I help you with your fitness journey today? If you have any queries, just ask! 💪";
-      }
+      if (!reply && checkGreeting(input)) reply = "Hello! 👋 How can I help you with your fitness journey today? 💪";
 
-      // 8. If still no reply, give a unique invalid reply
       if (!reply) {
-        let availableReplies = invalidReplies.filter(
-          (r) => r !== state.lastInvalidReply
-        );
+        let availableReplies = invalidReplies.filter((r) => r !== state.lastInvalidReply);
         if (availableReplies.length === 0) availableReplies = invalidReplies;
-        const invalid =
-          availableReplies[Math.floor(Math.random() * availableReplies.length)];
+        const invalid = availableReplies[Math.floor(Math.random() * availableReplies.length)];
         reply = invalid;
         setState({ lastInvalidReply: invalid });
-      } else {
-        setState({ lastInvalidReply: undefined });
-      }
+      } else setState({ lastInvalidReply: undefined });
 
       setTimeout(() => {
         setChat((prev) => [...prev, { sender: "bot", text: reply }]);
@@ -266,58 +188,81 @@ const ChatBot: React.FC = () => {
   };
 
   return (
-    <div
-      className="chatbot-container"
-      role="dialog"
-      aria-label="Fitness Chatbot"
-      aria-live="polite"
-    >
-      <div className="chatbot-header" tabIndex={0}>
-        Fitness Coach
-      </div>
-      <div className="chatbot-messages" tabIndex={0} aria-label="Chat messages">
-        {chat.map((m, i) => (
-          <div
-            key={i}
-            className={`chatbot-msg chatbot-msg-${m.sender}`}
-            aria-live="polite"
-          >
-            {m.text}
-          </div>
-        ))}
-        {isBotTyping && (
-          <div className="chatbot-msg chatbot-msg-bot chatbot-typing">
-            <span className="typing-indicator">
-              <span>.</span>
-              <span>.</span>
-              <span>.</span>
-            </span>{" "}
-            Bot is typing...
-          </div>
-        )}
-        <div ref={chatEndRef} />
-      </div>
-      <form
-        className="chatbot-input-box"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSend();
-        }}
-        aria-label="Type your message"
-      >
-        <input
-          type="text"
-          placeholder="Type your message…"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKey}
-          aria-label="Chat input"
-          autoFocus
-        />
-        <button type="submit" aria-label="Send message">
-          Send
+    <div className="fixed bottom-8 right-8 z-[2000]">
+      {/* Floating Chat Icon */}
+      {!isOpen && (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="w-16 h-16 flex items-center cursor-pointer justify-center rounded-full bg-[#fed600] text-[#0d1b3e] shadow-lg hover:scale-105 transition"
+        >
+          <MessageCircle size={28} />
         </button>
-      </form>
+      )}
+
+      {/* Chatbot Box */}
+      {isOpen && (
+        <div className="w-80 h-80 bg-[#0d1b3ee6] rounded-2xl shadow-2xl flex flex-col text-white overflow-hidden font-sans animate-slide-up">
+          <div className="bg-[#fed600] text-[#0d1b3e] font-extrabold text-center py-3 text-lg tracking-wide flex justify-between items-center px-3">
+            Fitness Coach
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-[#0d1b3e] font-bold hover:text-red-600 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="flex-1 p-4 overflow-y-auto bg-transparent max-h-80">
+            {chat.map((m, i) => (
+              <div
+                key={i}
+                className={`mb-3 px-4 py-2 rounded-xl max-w-[85%] whitespace-pre-line break-words text-base ${
+                  m.sender === "bot"
+                    ? "bg-[#0d1b3e] text-[#fed600] self-start rounded-bl-none"
+                    : "bg-[#fed600] text-[#0d1b3e] self-end rounded-br-none ml-auto"
+                }`}
+              >
+                {m.text}
+              </div>
+            ))}
+
+            {isBotTyping && (
+              <div className="bg-[#0d1b3e] text-[#fed600] self-start px-4 py-2 rounded-xl rounded-bl-none mb-3 flex items-center gap-2">
+                <span className="flex gap-1">
+                  <span className="animate-bounce">.</span>
+                  <span className="animate-bounce delay-200">.</span>
+                  <span className="animate-bounce delay-400">.</span>
+                </span>
+                Bot is typing...
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          <form
+            className="flex border-t border-[#fed600]/50 bg-white p-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSend();
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Type your message…"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKey}
+              className="flex-1 px-3 py-2 rounded-md text-black text-base outline-none mr-2"
+            />
+            <button
+              type="submit"
+              className="bg-[#fed600] text-[#0d1b3e] cursor-pointer font-bold rounded-md px-4 text-base hover:bg-[#ffe877] transition"
+            >
+              Send
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
