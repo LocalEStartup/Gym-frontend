@@ -54,7 +54,6 @@ const Orders = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-semibold mb-4">Admin Order Dashboard</h2>
 
       {/* Search & Filter Section */}
       <div className="flex gap-4 mb-4">

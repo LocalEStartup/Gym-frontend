@@ -7,6 +7,7 @@ import {
   ChefHat,
   Truck,
   PackagePlus,
+  Package
 } from "lucide-react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -16,18 +17,19 @@ import UsersComponent from "./Users";
 import AddUsers from "./AddUsers";
 import Orders from "./Orders";
 import AddProducts from "./AddProducts";
+import Products from "./Products"
 
 function DashboardContent({ counts }) {
   const cards = [
     { title: "Users", icon: <Users size={30} />, value: counts.user },
     { title: "Today Orders", icon: <ShoppingCart size={30} />, value: counts.order },
-    { title: "Chefs", icon: <ChefHat size={30} />, value: counts.chef },
-    { title: "Suppliers", icon: <Truck size={30} />, value: counts.supplier },
+    { title: "Trainers", icon: <ChefHat size={30} />, value: counts.trainers },
+    // { title: "Suppl", icon: <Truck size={30} />, value: counts.supplier },
   ];
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Dashboard</h1>
+      {/* <h1 className="text-3xl font-bold mb-6 text-gray-800">Dashboard</h1> */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {cards.map((card, i) => (
           <div
@@ -76,16 +78,17 @@ function Dashboard() {
   useEffect(() => setIsSidebarOpen(false), [headerTitle]);
 
   const menuItems = [
-    { name: "Home", icon: <Home size={20} />, path: "home", component: <DashboardContent counts={counts} /> },
+    { name: "Dashboard", icon: <Home size={20} />, path: "home", component: <DashboardContent counts={counts} /> },
     { name: "Add Products", icon: <PackagePlus size={20} />, path: "add-products", component: <AddProducts /> },
+    { name: "Products", icon: <Package size={20} />, path: "all-products", component: <Products /> },
     { name: "Orders", icon: <ShoppingCart size={20} />, path: "orders", component: <Orders /> },
-    { name: "Users", icon: <Users size={20} />, path: "users", component: <UsersComponent /> },
-    { name: "Add Supplier/Chef", icon: <UserPlus size={20} />, path: "add-users", component: <AddUsers /> },
+    { name: "Users", icon: <Users size={20} />, path: "all-users", component: <UsersComponent /> },
+    { name: "Add Users", icon: <UserPlus size={20} />, path: "add-users", component: <AddUsers /> },
   ];
 
   useEffect(() => {
     async function fetchCounts() {
-      setCounts({ user: 10, order: 5, chef: 3, supplier: 2 }); // mock data
+      setCounts({ user: 5, order: 5, trainers: 3}); // mock data
     }
     fetchCounts();
   }, []);
