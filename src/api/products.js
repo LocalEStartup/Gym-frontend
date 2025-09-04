@@ -1,4 +1,10 @@
 import API from "./api"
+// Add Product (with image upload)
+export const addProduct = async (formData) => {
+  return await API.post("/products", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
 export const getProducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const toggleActive = (id) => API.patch(`/products/${id}/toggle-active`);

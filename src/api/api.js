@@ -8,4 +8,9 @@ const API = axios.create({
   withCredentials: true
 });
 
+// 👉 Logout user (clear cookie from backend)
+export const logout = async () => {
+  return await API.post("/auth/logout", {}, { withCredentials: true });
+};
+
 export default API;
