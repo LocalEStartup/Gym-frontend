@@ -44,6 +44,7 @@ export default {
           yellow: "#fed600",
           dark1: "#06122f",
           dark2: "#0d1b3e",
+          cusprimary:"#033966",
         },
       },
       boxShadow: {

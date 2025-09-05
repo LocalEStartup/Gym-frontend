@@ -44,13 +44,23 @@ function Products() {
 
     // toggle active
     const handleToggleActive = async (id) => {
+        // Optimistically update UI
+        setProducts((prev) =>
+            prev.map((p) =>
+                p.id === id ? { ...p, active: Number(!p.active) } : p
+            )
+        );
         try {
             await toggleActive(id);
+            // Optionally refetch for freshness
             fetchProducts();
         } catch (e) {
             console.error("Toggle active failed", e);
+            // (Optional) revert UI state on error here
+            fetchProducts();
         }
     };
+
     // fetch single
     const fetchProductByIdFn = async (id) => {
         try {
@@ -100,9 +110,9 @@ function Products() {
     return (
         <div className="p-4">
             {/* Filter Section */}
-            <div className="flex gap-4 mb-4 text-black">
+            <div className="flex gap-4 mb-4 text-brand-cusprimary">
                 <select
-                    className="border p-2 rounded"
+                    className="border p-2 rounded bg-gray-200"
                     onChange={(e) => setPaymentFilter(e.target.value)}
                     value={paymentFilter}
                 >
@@ -116,7 +126,7 @@ function Products() {
             <div className="overflow-x-auto">
                 <table className="min-w-full border border-gray-300">
                     <thead>
-                        <tr className="bg-gray-200 text-gray-700">
+                        <tr className="bg-gray-200 text-brand-cusprimary">
                             <th className="p-2 border">Product ID</th>
                             <th className="p-2 border">Product Name</th>
                             <th className="p-2 border">Description</th>
@@ -135,7 +145,7 @@ function Products() {
                             </tr>
                         ) : filteredProducts.length > 0 ? (
                             filteredProducts.map((product) => (
-                                <tr key={product.id} className="border text-black">
+                                <tr key={product.id} className="border text-brand-cusprimary">
                                     <td className="px-2 text-center border">{product.id}</td>
                                     <td className="px-2 border">{product.productname}</td>
                                     <td className="px-2 border">{product.description}</td>
@@ -151,29 +161,28 @@ function Products() {
                                             <span className="text-gray-500">No image</span>
                                         )}
                                     </td>
-                                    <td className="px-2 border text-center">
-                                        {/* Toggle switch */}
-                                        <label className="inline-flex items-center cursor-pointer select-none">
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only peer"
-                                                checked={product.active === 1}
-                                                onChange={() => handleToggleActive(product.id)}
-                                            />
-                                            <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition-colors relative">
-                                                <div className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
-                                            </div>
-                                            <span
-                                                className={`ml-2 ${product.active === 1 ? "text-green-600" : "text-red-600"
-                                                    }`}
+                                    <td className="px-2 h-full">
+                                        {/* The Toggle */}
+                                        <div className="flex justify-center items-center h-full">
+                                            <button
+                                                type="button"
+                                                aria-pressed={product.active === 1}
+                                                className={`w-12 h-6 flex items-center rounded-full transition-colors ${product.active === 1 ? "bg-green-500" : "bg-gray-300"} p-1`}
+                                                onClick={() => handleToggleActive(product.id)}
+                                                style={{ minWidth: "3rem" }}
                                             >
-                                                {product.active === 1 ? "Active" : "Inactive"}
-                                            </span>
-                                        </label>
+                                                <span
+                                                    className={`w-5 h-5 rounded-full bg-white shadow-md transform transition-transform duration-200 ${product.active === 1 ? "translate-x-6" : "translate-x-0"}`}
+                                                />
+                                            </button>
+                                        </div>
                                     </td>
+
+
+
                                     <td className="px-2 border text-center space-x-2">
                                         <button
-                                            className="px-2 py-1 bg-blue-500 text-white rounded"
+                                            className="px-2 py-1 bg-brand-cussecondary text-white rounded"
                                             onClick={async () => {
                                                 const freshProduct = await getProductById(product.id);
                                                 if (freshProduct) {

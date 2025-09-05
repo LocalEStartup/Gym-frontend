@@ -36,10 +36,10 @@ function DashboardContent({ counts }) {
             key={i}
             className="bg-white p-6 shadow-lg rounded-lg flex items-center space-x-4"
           >
-            <div className="text-orange-500">{card.icon}</div>
+            <div className="text-brand-cussecondary">{card.icon}</div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-700">{card.title}</h2>
-              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+              <h2 className="text-lg font-semibold text-brand-cusprimary">{card.title}</h2>
+              <p className="text-2xl font-bold text-brand-cussecondary">{card.value}</p>
             </div>
           </div>
         ))}

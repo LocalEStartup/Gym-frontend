@@ -28,7 +28,7 @@ const handleLogout = async () => {
         >
           {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
-        <h1 className="text-xl font-bold text-gray-800">{title}</h1>
+        <h1 className="text-xl font-bold text-blue-900">{title}</h1>
       </div>
 
       {/* Right: Logout */}

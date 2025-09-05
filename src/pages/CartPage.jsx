@@ -72,13 +72,13 @@ const CartPage = () => {
               key={item.id}
             >
               <img
-                src={item.image}
-                alt={item.name}
+                src={`${import.meta.env.VITE_API_URL.replace(/\/api$/, "")}/uploads/${item.image}`}
+                alt={item.productname}
                 className="w-20 h-20 object-contain rounded-lg bg-white shadow-md"
               />
               <div className="flex-1 text-left">
                 <h2 className="text-lg font-bold text-yellow-400 mb-2">
-                  {item.name}
+                  {item.productname}
                 </h2>
                 <div className="flex items-center mb-3">
                   <button

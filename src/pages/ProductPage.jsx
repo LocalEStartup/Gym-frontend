@@ -85,14 +85,14 @@ const ProductPage = () => {
               className="bg-gradient-to-tr from-[#0d1b3e] to-[#fed600] text-white rounded-xl shadow-xl w-64 p-6 transition-transform duration-200 hover:-translate-y-2 hover:scale-105 hover:shadow-2xl animate-zoomIn relative"
             >
               <img
-                src={prod.image}
-                alt={prod.name}
+                src={`${import.meta.env.VITE_API_URL.replace(/\/api$/, "")}/uploads/${prod.image}`}
+                alt={prod.productname}
                 className="w-28 h-28 object-contain mb-4 rounded-lg bg-white shadow-md transition-transform duration-200 group-hover:scale-110 group-hover:-rotate-3 mx-auto"
               />
               <h2 className="text-[#fed600] text-xl font-bold mb-2">
-                {prod.name}
+                {prod.productname}
               </h2>
-              <p className="text-sm opacity-90 mb-4">{prod.desc}</p>
+              <p className="text-sm opacity-90 mb-4">{prod.description}</p>
               <div className="flex justify-between items-center">
                 <span className="text-[#fed600] font-extrabold text-lg tracking-wide">
                   ₹{prod.price}
